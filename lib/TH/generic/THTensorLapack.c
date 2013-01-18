@@ -22,6 +22,95 @@ static int THTensor_(lapackClone)(THTensor *r_, THTensor *m, int forced)
   return clone;
 }
 
+TH_API void THTensor_(gpotrs)(THTensor *rb_, THTensor *ra_, THTensor *b, THTensor *a)
+{
+  int n, nrhs, lda, ldb, info;
+  THTensor *ra__;
+  THTensor *rb__;
+
+  int clonea;
+  int cloneb;
+  int destroya;
+  int destroyb;
+
+  
+  if (a == NULL || ra_ == a) /* possibly destroy the inputs  */
+  {
+    ra__ = THTensor_(new)();
+    clonea = THTensor_(lapackClone)(ra__,ra_,0);
+    destroya = 1;
+  }
+  else /*we want to definitely clone and use ra_ and rb_ as computational space*/
+  {
+    clonea = THTensor_(lapackClone)(ra_,a,1);
+    ra__ = ra_;
+    destroya = 0;
+  }
+  if (b == NULL || rb_ == b) /* possibly destroy the inputs  */
+  {
+    rb__ = THTensor_(new)();
+    cloneb = THTensor_(lapackClone)(rb__,rb_,0);
+    destroyb = 1;
+  }
+  else /*we want to definitely clone and use ra_ and rb_ as computational space*/
+  {
+    cloneb = THTensor_(lapackClone)(rb_,b,1);
+    rb__ = rb_;
+    destroyb = 0;
+  }
+
+  THArgCheck(ra__->nDimension == 2, 1, "A should be 2 dimensional");
+  THArgCheck(rb__->nDimension == 2, 2, "b should be 2 dimensional");
+  THArgCheck(ra__->size[0] == ra__->size[1], 1, "A should be square");
+  THArgCheck(rb__->size[0] == ra__->size[0], 2, "A,b size incomptable");
+
+  n    = (int)ra__->size[0];
+  nrhs = (int)rb__->size[1];
+  lda  = n;
+  ldb  = n;
+
+  /* we first need to compute the cholesky decomposition of a */
+  char uplo = 'L';
+  THLapack_(gpotrf)(uplo, n, THTensor_(data)(ra__), lda, &info);
+
+  if (info < 0)
+  {
+    THError("Lapack gpotrf : Argument %d : illegal value", -info);
+  }
+  else if (info > 0)
+  {
+    THError("Lapack gpotrf : minor %d is not positive definite.", info);
+  }
+
+  /* next go ahead and solve the problem */  
+  THLapack_(gpotrs)(uplo, n, nrhs, 
+		  THTensor_(data)(ra__), lda, 
+		  THTensor_(data)(rb__), ldb, &info);
+  if (info < 0)
+  {
+    THError("Lapack gpotrs : Argument %d : illegal value", -info);
+  }
+
+  /* clean up */
+  if (destroya)
+  {
+    if (clonea)
+    {
+      THTensor_(copy)(ra_,ra__);
+    }
+    THTensor_(free)(ra__);
+  }
+  if (destroyb)
+  {
+    if (cloneb)
+    {
+      THTensor_(copy)(rb_,rb__);
+    }
+    THTensor_(free)(rb__);
+  }
+     
+}
+
 TH_API void THTensor_(gesv)(THTensor *rb_, THTensor *ra_, THTensor *b, THTensor *a)
 {
   int n, nrhs, lda, ldb, info;

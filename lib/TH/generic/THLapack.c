@@ -33,6 +33,21 @@ void THLapack_(gels)(char trans, int m, int n, int nrhs, real *a, int lda, real 
 #endif
 }
 
+void THLapack_(gpotrs)(char uplo, int n, int nrhs, real *a, int lda, real *b, int ldb, int *info)
+{
+#ifdef USE_LAPACK
+#if defined(TH_REAL_IS_DOUBLE)
+  extern void dpotrs_(char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
+  dpotrs_(&uplo, &n, &nrhs, a, &lda, b, &ldb, info);
+#else
+  extern void spotrs_(char *uplo, int *n, int *nrhs, float *a, int *lda, float *b, int *ldb, int *info);
+  spotrs_(&uplo, &n, &nrhs, a, &lda, b, &ldb, info);
+#endif
+#else
+  THError("gpotrs : Lapack library not found in compile time\n");
+#endif
+}
+
 void THLapack_(syev)(char jobz, char uplo, int n, real *a, int lda, real *w, real *work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
@@ -93,6 +108,23 @@ void THLapack_(getrf)(int m, int n, real *a, int lda, int *ipiv, int *info)
   THError("getrf : Lapack library not found in compile time\n");
 #endif
 }
+
+/* Cholesky decomposition */
+void THLapack_(gpotrf)(char uplo, int n, real *a, int lda, int *info)
+{
+#ifdef  USE_LAPACK
+#if defined(TH_REAL_IS_DOUBLE)
+  extern void dpotrf_(char *uplo, int *n, double *a, int *lda, int *info);
+  dpotrf_(&uplo, &n, a, &lda, info);
+#else
+  extern void spotrf_(char *uplo, int *n, float *a, int *lda, int *info);
+  spotrf_(&uplo, &n, a, &lda, info);
+#endif
+#else
+  THError("gpotrf : Lapack library not found in compile time\n");
+#endif
+}
+
 /* Matrix Inverse */
 void THLapack_(getri)(int n, real *a, int lda, int *ipiv, real *work, int lwork, int* info)
 {

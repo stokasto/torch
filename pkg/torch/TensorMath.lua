@@ -956,7 +956,7 @@ static void THTensor_random1__(THTensor *self, long b)
                {name=real, default=f.a}})
       end
       
-      for _,name in ipairs({"gesv","gels"}) do
+      for _,name in ipairs({"gesv","gels","gpotrs"}) do
          interface:wrap(name,
                         cname(name),
                         {{name=Tensor, returned=true},
