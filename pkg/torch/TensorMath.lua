@@ -956,7 +956,7 @@ static void THTensor_random1__(THTensor *self, long b)
                {name=real, default=f.a}})
       end
       
-      for _,name in ipairs({"gesv","gels","gpotrs"}) do
+      for _,name in ipairs({"gesv","gels"}) do
          interface:wrap(name,
                         cname(name),
                         {{name=Tensor, returned=true},
@@ -970,6 +970,21 @@ static void THTensor_random1__(THTensor *self, long b)
                          {name=Tensor}}
                      )
       end
+
+      interface:wrap("gpotrs", 
+                     cname("gpotrs"),
+                     {{name=Tensor, returned=true},
+                      {name=Tensor, returned=true},
+                      {name=Tensor},
+                      {name=Tensor},
+                      {name='charoption', values={'U', 'L'}, default='U'}},
+                     cname("gpotrs"),
+                     {{name=Tensor, default=true, returned=true, invisible=true},
+                      {name=Tensor, default=true, returned=true, invisible=true},
+                      {name=Tensor},
+                      {name=Tensor},
+                      {name='charoption', values={'U', 'L'}, default='U'}}
+                  )
 
       interface:wrap("symeig",
                      cname("syev"),

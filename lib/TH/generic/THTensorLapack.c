@@ -22,7 +22,7 @@ static int THTensor_(lapackClone)(THTensor *r_, THTensor *m, int forced)
   return clone;
 }
 
-TH_API void THTensor_(gpotrs)(THTensor *rb_, THTensor *ra_, THTensor *b, THTensor *a)
+TH_API void THTensor_(gpotrs)(THTensor *rb_, THTensor *ra_, THTensor *b, THTensor *a, const char *uplo)
 {
   int n, nrhs, lda, ldb, info;
   THTensor *ra__;
@@ -70,8 +70,7 @@ TH_API void THTensor_(gpotrs)(THTensor *rb_, THTensor *ra_, THTensor *b, THTenso
   ldb  = n;
 
   /* we first need to compute the cholesky decomposition of a */
-  char uplo = 'L';
-  THLapack_(gpotrf)(uplo, n, THTensor_(data)(ra__), lda, &info);
+  THLapack_(gpotrf)(uplo[0], n, THTensor_(data)(ra__), lda, &info);
 
   if (info < 0)
   {
@@ -83,9 +82,9 @@ TH_API void THTensor_(gpotrs)(THTensor *rb_, THTensor *ra_, THTensor *b, THTenso
   }
 
   /* next go ahead and solve the problem */  
-  THLapack_(gpotrs)(uplo, n, nrhs, 
-		  THTensor_(data)(ra__), lda, 
-		  THTensor_(data)(rb__), ldb, &info);
+  THLapack_(gpotrs)(uplo[0], n, nrhs, 
+                    THTensor_(data)(ra__), lda, 
+                    THTensor_(data)(rb__), ldb, &info);
   if (info < 0)
   {
     THError("Lapack gpotrs : Argument %d : illegal value", -info);
