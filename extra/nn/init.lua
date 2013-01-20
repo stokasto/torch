@@ -52,6 +52,7 @@ include('Square.lua')
 include('Sqrt.lua')
 include('HardShrink.lua')
 include('SoftShrink.lua')
+include('Relu.lua')
 include('Threshold.lua')
 
 include('LookupTable.lua')

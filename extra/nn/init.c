@@ -44,6 +44,9 @@
 #include "generic/Threshold.c"
 #include "THGenerateFloatTypes.h"
 
+#include "generic/Relu.c"
+#include "THGenerateFloatTypes.h"
+
 #include "generic/SoftMax.c"
 #include "THGenerateFloatTypes.h"
 
@@ -127,6 +130,7 @@ DLL_EXPORT int luaopen_libnn(lua_State *L)
   nn_FloatAbs_init(L);
   nn_FloatHardShrink_init(L);
   nn_FloatSoftShrink_init(L);
+  nn_FloatRelu_init(L);
   nn_FloatThreshold_init(L);
   nn_FloatSparseLinear_init(L);
   nn_FloatTemporalConvolution_init(L);
@@ -161,6 +165,7 @@ DLL_EXPORT int luaopen_libnn(lua_State *L)
   nn_DoubleAbs_init(L);
   nn_DoubleHardShrink_init(L);
   nn_DoubleSoftShrink_init(L);
+  nn_DoubleRelu_init(L);
   nn_DoubleThreshold_init(L);
   nn_DoubleSparseLinear_init(L);
   nn_DoubleTemporalConvolution_init(L);
