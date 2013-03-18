@@ -30,5 +30,5 @@ SET(Torch_INSTALL_CMAKE_SUBDIR "share/cmake/torch" CACHE PATH
 SET(Torch_INSTALL_LUA_PATH_SUBDIR "share/torch/lua" CACHE PATH
   "Install dir for Lua packages files (relative to Torch_INSTALL_PREFIX)")
 
-SET(Torch_INSTALL_LUA_CPATH_SUBDIR "lib/torch" CACHE PATH
+SET(Torch_INSTALL_LUA_CPATH_SUBDIR "lib/torch/lua" CACHE PATH
   "Install dir for Lua C packages files (relative to Torch_INSTALL_PREFIX)")
